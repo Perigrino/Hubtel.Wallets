@@ -13,7 +13,7 @@ public static class CustomerContractMapping
             Id = Guid.NewGuid(),
             FirstName = request.FirstName,
             LastName = request.LastName,
-            BirthDate = DateTime.Today,
+            BirthDate = DateTime.UtcNow,
             Email = request.Email,
             PhoneNumber = request.PhoneNumber,
             Address = request.Address,
@@ -32,7 +32,7 @@ public static class CustomerContractMapping
             PhoneNumber = request.PhoneNumber,
             Address = request.Address,
             Email = request.Email,
-            BirthDate = DateTime.Today
+            BirthDate = DateTime.UtcNow
         };
     }
     
@@ -46,9 +46,10 @@ public static class CustomerContractMapping
             PhoneNumber = customer.PhoneNumber,
             Address = customer.Address,
             Email = customer.Email,
-            BirthDate = DateTime.Today
+            BirthDate = customer.BirthDate
         };
     }
+    
     
     public static CustomersResponse MapsToResponse(this IEnumerable<Customer> customers) //This maps the list of customers to the CustomersResponses
     {

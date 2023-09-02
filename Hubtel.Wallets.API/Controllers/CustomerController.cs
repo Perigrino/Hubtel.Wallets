@@ -1,9 +1,7 @@
 using Hubtel.Wallets.Application.Interface;
-using Hubtel.Wallets.Application.Model;
 using Hubtel.Wallets.ContractMappings;
 using Hubtel.Wallets.Contracts.Request;
 using Hubtel.Wallets.Contracts.Response;
-using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using TouchGrassCart.API;
 using TouchGrassCart.Contracts.Response;
@@ -56,6 +54,7 @@ public class CustomerController :Controller
         };
         return Ok(customerResponse);
     }
+    
     
     //POST Customer
     [HttpPost(ApiEndpoints.Customers.Create)]
