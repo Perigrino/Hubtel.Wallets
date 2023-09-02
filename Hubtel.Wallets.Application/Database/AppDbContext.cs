@@ -1,0 +1,38 @@
+using Hubtel.Wallets.Application.Model;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
+
+namespace Hubtel.Wallets.Application.Database;
+
+public class AppDbContext : DbContext
+{
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    {
+        
+    }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)  
+    {
+   
+    }
+
+    public DbSet<Customer> Customers { get; set; }
+    public DbSet<CustomerWallet> CustomerWallets { get; set; }
+}
+
+
+public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+{
+    public AppDbContext CreateDbContext(string[] args)
+    {
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory()) // Assuming the appsettings.json file is in the same directory
+            .AddJsonFile(@Directory.GetCurrentDirectory() + "/../Hubtel.Wallets.API/appsettings.json")
+            .Build();
+        var connectionString = configuration.GetConnectionString("Default");
+        var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+        optionsBuilder.UseNpgsql(connectionString);
+
+        return new AppDbContext(optionsBuilder.Options);
+    }
+}
