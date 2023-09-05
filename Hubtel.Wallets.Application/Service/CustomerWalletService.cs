@@ -22,4 +22,20 @@ public class CustomerWalletService : ICustomerWalletService
         
         return numberOfWallet >= 5;
     }
+
+    public bool CustomerWalletExists(Guid customerId, string accountNumber)
+    {
+        var result = _customerRepository.GetCustomerById(customerId);
+        if (result == null)
+        {
+            var walletExists = result?.Result.CustomerWallets;
+            if (walletExists != null)
+            {
+                var wallet = walletExists.FirstOrDefault(ac => ac.AccountNumber == accountNumber);
+            }
+            return true;
+        }
+
+        return false;
+    }
 }
