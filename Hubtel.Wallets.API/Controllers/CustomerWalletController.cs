@@ -1,4 +1,5 @@
 using Hubtel.Wallets.Application.Interface;
+using Hubtel.Wallets.Application.Model;
 using Hubtel.Wallets.ContractMappings;
 using Hubtel.Wallets.Contracts.Request;
 using Hubtel.Wallets.Contracts.Response;
@@ -85,9 +86,22 @@ public class CustomerWalletController : Controller
                 };
                 return CreatedAtAction(nameof(Get), new { id = mapToWallet.Id }, walletResponse);
             }
-            return BadRequest("You are trying to add an existing wallet");
+            
+            var walletExistsResponse = new FinalResponse<object>
+            {
+                StatusCode = 400,
+                Message = "Wallet already exist on customer's account",
+                Data = null
+            };
+            return BadRequest(walletExistsResponse);
         }
-        return BadRequest("User has more than 5 wallets");
+        var walletMaxedResponse = new FinalResponse<object>
+        {
+            StatusCode = 400,
+            Message = "Customer already has 5 wallets on account.",
+            Data = null
+        };
+        return BadRequest(walletMaxedResponse);
     }
     
     //UPDATE Customer
