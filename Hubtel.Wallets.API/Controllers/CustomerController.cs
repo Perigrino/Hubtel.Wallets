@@ -3,7 +3,6 @@ using Hubtel.Wallets.ContractMappings;
 using Hubtel.Wallets.Contracts.Request;
 using Hubtel.Wallets.Contracts.Response;
 using Microsoft.AspNetCore.Mvc;
-using TouchGrassCart.Contracts.Response;
 
 namespace Hubtel.Wallets.Controllers;
 

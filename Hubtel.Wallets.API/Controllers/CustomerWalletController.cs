@@ -3,7 +3,6 @@ using Hubtel.Wallets.ContractMappings;
 using Hubtel.Wallets.Contracts.Request;
 using Hubtel.Wallets.Contracts.Response;
 using Microsoft.AspNetCore.Mvc;
-using TouchGrassCart.Contracts.Response;
 
 namespace Hubtel.Wallets.Controllers;
 
@@ -71,19 +70,23 @@ public class CustomerWalletController : Controller
         }
 
         var maxedWalletsReached = _walletService.HasReachedMaxWallets(request.CustomerId);
+        var accountWalletExists = await _walletRepository.CustomerWalletExists(request.AccountNumber);
         if (!maxedWalletsReached)
         {
-            var mapToWallet = request.MapToWallet();
-            await _walletRepository.CreateCustomerWallet(mapToWallet ?? throw new InvalidOperationException());
-            var walletResponse = new FinalResponse<CustomerWalletResponse>
+            if (!accountWalletExists)
             {
-                StatusCode = 201,
-                Message = "Wallet created successfully.",
-                Data = mapToWallet.MapsToResponse()
-            };
-            return CreatedAtAction(nameof(Get), new { id = mapToWallet.Id }, walletResponse);
+                var mapToWallet = request.MapToWallet();
+                await _walletRepository.CreateCustomerWallet(mapToWallet ?? throw new InvalidOperationException());
+                var walletResponse = new FinalResponse<CustomerWalletResponse>
+                {
+                    StatusCode = 201,
+                    Message = "Wallet created successfully.",
+                    Data = mapToWallet.MapsToResponse()
+                };
+                return CreatedAtAction(nameof(Get), new { id = mapToWallet.Id }, walletResponse);
+            }
+            return BadRequest("You are trying to add an existing wallet");
         }
-
         return BadRequest("User has more than 5 wallets");
     }
     

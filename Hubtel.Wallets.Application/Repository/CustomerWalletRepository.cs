@@ -73,10 +73,18 @@ public class CustomerWalletRepository : ICustomerWalletRepository
 
     public async Task<bool> WalletExists(Guid id)
     {
-        var wallet =  await _context.CustomerWallets.AnyAsync(w => w.Id == id);
+        var wallet =  await _context.CustomerWallets
+            .AnyAsync(w => w.Id == id);
         return wallet;
     }
-    
+
+    public async Task<bool> CustomerWalletExists(string accountNumber)
+    {
+        var wallet =  await _context.CustomerWallets
+            .AnyAsync(an => an.AccountNumber == accountNumber);
+        return wallet;
+    }
+
     public async Task<bool> Save()
     {
         var saved =  await _context.SaveChangesAsync();

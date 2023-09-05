@@ -1,4 +1,4 @@
-namespace TouchGrassCart.Contracts.Response;
+namespace Hubtel.Wallets.Contracts.Response;
 
 public class FinalResponse<T>
 {
