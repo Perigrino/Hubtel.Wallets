@@ -10,5 +10,6 @@ public interface ICustomerWalletRepository
     Task<bool> UpdateCustomerWallet(CustomerWallet wallet);
     Task<bool> DeleteCustomerWallet(Guid walletId);
     Task<bool> WalletExists(Guid walletId);
+    Task<bool> CustomerWalletExists(string accountNumber);
     Task<bool> Save();
 }
