@@ -46,7 +46,8 @@ public static class CustomerContractMapping
             PhoneNumber = customer.PhoneNumber,
             Address = customer.Address,
             Email = customer.Email,
-            BirthDate = customer.BirthDate
+            BirthDate = customer.BirthDate,
+            CustomerWallets = customer.CustomerWallets
         };
     }
     

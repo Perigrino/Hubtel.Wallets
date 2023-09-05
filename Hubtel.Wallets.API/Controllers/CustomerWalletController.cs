@@ -3,7 +3,6 @@ using Hubtel.Wallets.ContractMappings;
 using Hubtel.Wallets.Contracts.Request;
 using Hubtel.Wallets.Contracts.Response;
 using Microsoft.AspNetCore.Mvc;
-using TouchGrassCart.API;
 using TouchGrassCart.Contracts.Response;
 
 namespace Hubtel.Wallets.Controllers;
@@ -13,10 +12,12 @@ namespace Hubtel.Wallets.Controllers;
 public class CustomerWalletController : Controller
 {
     private readonly ICustomerWalletRepository _walletRepository;
+    private readonly ICustomerWalletService _walletService;
 
-    public CustomerWalletController(ICustomerWalletRepository walletRepository)
+    public CustomerWalletController(ICustomerWalletRepository walletRepository, ICustomerWalletService walletService)
     {
         _walletRepository = walletRepository;
+        _walletService = walletService;
     }
     
     //GET all Wallets
@@ -68,16 +69,22 @@ public class CustomerWalletController : Controller
         {
             return BadRequest(new FinalResponse<object> { StatusCode = 400, Message = "Validation failed.", Data = ModelState });
         }
-        
-        var mapToWallet = request.MapToWallet();
-        await _walletRepository.CreateCustomerWallet(mapToWallet ?? throw new InvalidOperationException());
-        var walletResponse = new FinalResponse<CustomerWalletResponse>
+
+        var maxedWalletsReached = _walletService.HasReachedMaxWallets(request.CustomerId);
+        if (!maxedWalletsReached)
         {
-            StatusCode = 201,
-            Message = "Wallet created successfully.",
-            Data = mapToWallet.MapsToResponse()
-        };
-        return CreatedAtAction(nameof(Get), new { id = mapToWallet.Id }, walletResponse);
+            var mapToWallet = request.MapToWallet();
+            await _walletRepository.CreateCustomerWallet(mapToWallet ?? throw new InvalidOperationException());
+            var walletResponse = new FinalResponse<CustomerWalletResponse>
+            {
+                StatusCode = 201,
+                Message = "Wallet created successfully.",
+                Data = mapToWallet.MapsToResponse()
+            };
+            return CreatedAtAction(nameof(Get), new { id = mapToWallet.Id }, walletResponse);
+        }
+
+        return BadRequest("User has more than 5 wallets");
     }
     
     //UPDATE Customer

@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Hubtel.Wallets.Application.Database;
 using Hubtel.Wallets.Application.Interface;
 using Hubtel.Wallets.Application.Repository;
+using Hubtel.Wallets.Application.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ICustomerWalletRepository, CustomerWalletRepository>();
+builder.Services.AddScoped<ICustomerWalletService, CustomerWalletService>();
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); 

@@ -13,7 +13,10 @@ public class AppDbContext : DbContext
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)  
     {
-   
+        modelBuilder.Entity<Customer>()
+            .HasMany(u => u.CustomerWallets)
+            .WithOne(w => w.Customer)
+            .HasForeignKey(w => w.CustomerId);
     }
 
     public DbSet<Customer> Customers { get; set; }

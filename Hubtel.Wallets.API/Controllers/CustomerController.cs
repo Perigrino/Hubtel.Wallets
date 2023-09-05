@@ -3,7 +3,6 @@ using Hubtel.Wallets.ContractMappings;
 using Hubtel.Wallets.Contracts.Request;
 using Hubtel.Wallets.Contracts.Response;
 using Microsoft.AspNetCore.Mvc;
-using TouchGrassCart.API;
 using TouchGrassCart.Contracts.Response;
 
 namespace Hubtel.Wallets.Controllers;
@@ -56,7 +55,31 @@ public class CustomerController :Controller
     }
     
     
+    //GET CustomerById
+    // [HttpGet(ApiEndpoints.Customers.GetWallet)]
+    // public async Task<IActionResult> GetWalletsByCustomerId([FromRoute] Guid id)
+    // {
+    //     var customer = await _customerRepository.GetWalletByCustomerId(id);
+    //     if (customer == null)
+    //     {
+    //         return NotFound(new FinalResponse<object>
+    //         {
+    //             StatusCode = 404,
+    //             Message = "Customer not found."
+    //         });
+    //     }
+    //     
+    //     var customerResponse = new FinalResponse<object>
+    //     {
+    //         StatusCode = 200,
+    //         Message = "Customer retrieved successfully.",
+    //         Data = customer.MapsToResponse()
+    //     };
+    //     return Ok(customerResponse);
+    // }
+    
     //POST Customer
+    
     [HttpPost(ApiEndpoints.Customers.Create)]
     public async Task<IActionResult> CreateCustomer([FromBody] CreateCustomerRequest request)
     {
