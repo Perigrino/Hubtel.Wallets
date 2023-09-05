@@ -70,10 +70,10 @@ public class CustomerWalletController : Controller
         }
 
         var maxedWalletsReached = _walletService.HasReachedMaxWallets(request.CustomerId);
-        var accountWalletExists = await _walletRepository.CustomerWalletExists(request.AccountNumber);
+        var accountWalletExists = _walletService.CustomerWalletExists(request.CustomerId, request.AccountNumber);
         if (!maxedWalletsReached)
         {
-            if (!accountWalletExists)
+            if (accountWalletExists)
             {
                 var mapToWallet = request.MapToWallet();
                 await _walletRepository.CreateCustomerWallet(mapToWallet ?? throw new InvalidOperationException());
