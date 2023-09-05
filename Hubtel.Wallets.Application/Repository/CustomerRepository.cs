@@ -17,21 +17,26 @@ public class CustomerRepository : ICustomerRepository
     public async Task<IEnumerable<Customer>> GetCustomerAsync()
     {
         var customers = await _context.Customers
-            // .Include(wallets => wallets.CustomerWallets )
+            .Include(wallets => wallets.CustomerWallets )
             .ToListAsync();
         return customers;
     }
 
     public async Task<Customer> GetCustomerById(Guid id)
     {
-        var result = await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
+        var result = await _context.Customers
+            .Include(wallets => wallets.CustomerWallets)
+            .FirstOrDefaultAsync(c => c.Id == id);
         return result ?? throw new InvalidOperationException();
     }
 
-    // public async Task<CustomerWallet> GetCustomerWalletsById(Guid customerId)
+    // public async Task<CustomerWallet> GetWalletByCustomerId(Guid id)
     // {
-    //     var wallets = await _context.CustomerWallets.FirstOrDefaultAsync(w => w.CustomerId == customerId);
-    //     return wallets ?? throw new InvalidOperationException();
+    //     var result = await _context.CustomerWallets
+    //         .FindAsync(id);
+    //     return result ?? throw new InvalidOperationException();
+    //     
+    //     //throw new NotImplementedException();
     // }
 
     public async Task<bool> CreateCustomer(Customer customer)

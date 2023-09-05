@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Hubtel.Wallets.Application.Model;
 
 public class CustomerWallet
@@ -10,6 +12,6 @@ public class CustomerWallet
     public required DateTime CreatedAt { get; set; }
     public required string Owner { get; set; }
     public Guid CustomerId { get; set; }
-    public Customer Customer { get; set; }
+    [JsonIgnore] public Customer? Customer { get; set; }
 
 }

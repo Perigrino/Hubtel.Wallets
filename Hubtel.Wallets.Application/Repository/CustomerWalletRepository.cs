@@ -2,6 +2,7 @@ using Hubtel.Wallets.Application.Database;
 using Hubtel.Wallets.Application.Interface;
 using Hubtel.Wallets.Application.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Hubtel.Wallets.Application.Repository;
 
@@ -25,7 +26,7 @@ public class CustomerWalletRepository : ICustomerWalletRepository
         var result = await _context.CustomerWallets.FirstOrDefaultAsync(wallet => wallet.Id == walletId);
         return result ?? throw new InvalidOperationException();
     }
-
+    
     public async Task<bool> CreateCustomerWallet(CustomerWallet wallet)
     {
         var newWallet = new CustomerWallet
@@ -41,7 +42,6 @@ public class CustomerWalletRepository : ICustomerWalletRepository
         };
         await _context.AddAsync(newWallet);
         return await Save();
-
     }
 
     public async Task<bool> UpdateCustomerWallet(CustomerWallet wallet)
