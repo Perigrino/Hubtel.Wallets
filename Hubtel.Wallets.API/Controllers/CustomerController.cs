@@ -18,9 +18,9 @@ public class CustomerController :Controller
 
     //GET all Customers
     [HttpGet(ApiEndpoints.Customers.GetAll)]
-    public async Task<IActionResult> GetCustomers()
+    public async Task<IActionResult> GetCustomers(CancellationToken token)
     {
-        var customer = await _customerRepository.GetCustomerAsync();
+        var customer = await _customerRepository.GetCustomerAsync(token);
         var customerResponse = new FinalResponse<CustomersResponse>
         {
             StatusCode = 200,
@@ -32,9 +32,9 @@ public class CustomerController :Controller
     
     //GET CustomerById
     [HttpGet(ApiEndpoints.Customers.Get)]
-    public async Task<IActionResult> Get([FromRoute] Guid id)
+    public async Task<IActionResult> Get([FromRoute] Guid id, CancellationToken token)
     {
-        var customer = await _customerRepository.GetCustomerById(id);
+        var customer = await _customerRepository.GetCustomerById(id, token);
         if (customer == null)
         {
             return NotFound(new FinalResponse<object>
@@ -80,7 +80,7 @@ public class CustomerController :Controller
     //POST Customer
     
     [HttpPost(ApiEndpoints.Customers.Create)]
-    public async Task<IActionResult> CreateCustomer([FromBody] CreateCustomerRequest request)
+    public async Task<IActionResult> CreateCustomer([FromBody] CreateCustomerRequest request, CancellationToken token)
     {
         if (request == null)
         {
@@ -92,7 +92,7 @@ public class CustomerController :Controller
         }
         
         var mapToCustomer = request.MapToCustomer();
-        await _customerRepository.CreateCustomer(mapToCustomer ?? throw new InvalidOperationException());
+        await _customerRepository.CreateCustomer(mapToCustomer ?? throw new InvalidOperationException(), token);
         var customerResponse = new FinalResponse<CustomerResponse>
         {
             StatusCode = 201,
@@ -104,7 +104,7 @@ public class CustomerController :Controller
     
     //UPDATE Customer
     [HttpPut(ApiEndpoints.Customers.Update)]
-    public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateCustomerRequest request)
+    public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateCustomerRequest request, CancellationToken token)
     {
         if (request == null)
         {
@@ -115,7 +115,7 @@ public class CustomerController :Controller
             return BadRequest(new FinalResponse<object> { StatusCode = 400, Message = "Validation failed.", Data = ModelState });
         }
         var mapToCustomer = request.MapToCustomer(id);
-        var updatedCustomer = await _customerRepository.UpdateCustomer(mapToCustomer);
+        var updatedCustomer = await _customerRepository.UpdateCustomer(mapToCustomer, token);
         if (updatedCustomer is false)
         {
             return NotFound(new FinalResponse<object>
@@ -136,10 +136,10 @@ public class CustomerController :Controller
 
     //DELETE Customer 
     [HttpDelete(ApiEndpoints.Customers.Delete)]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id, CancellationToken token)
     {
         await _customerRepository.CustomerExists(id);
-        var deleteCustomer = await _customerRepository.DeleteCustomer(id);
+        var deleteCustomer = await _customerRepository.DeleteCustomer(id, token);
         if (!deleteCustomer)
         {
             return NotFound(new FinalResponse<string>

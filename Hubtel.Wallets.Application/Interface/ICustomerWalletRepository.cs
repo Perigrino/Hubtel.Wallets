@@ -4,12 +4,12 @@ namespace Hubtel.Wallets.Application.Interface;
 
 public interface ICustomerWalletRepository
 {
-    Task<IEnumerable<CustomerWallet>> GetCustomerWalletsAsync();
-    Task<CustomerWallet> GetWalletByWalletId(Guid walletId);
-    Task<bool> CreateCustomerWallet(CustomerWallet wallet);
-    Task<bool> UpdateCustomerWallet(CustomerWallet wallet);
-    Task<bool> DeleteCustomerWallet(Guid walletId);
-    Task<bool> WalletExists(Guid walletId);
-    Task<bool> CustomerWalletExists(string accountNumber);
-    Task<bool> Save();
+    Task<IEnumerable<CustomerWallet>> GetCustomerWalletsAsync(CancellationToken token = default);
+    Task<CustomerWallet> GetWalletByWalletId(Guid walletId, CancellationToken token = default);
+    Task<bool> CreateCustomerWallet(CustomerWallet wallet , CancellationToken token = default);
+    Task<bool> UpdateCustomerWallet(CustomerWallet wallet , CancellationToken token = default);
+    Task<bool> DeleteCustomerWallet(Guid walletId, CancellationToken token = default);
+    Task<bool> WalletExists(Guid walletId, CancellationToken token = default);
+    Task<bool> CustomerWalletExists(string accountNumber , CancellationToken token = default);
+    Task<bool> Save(CancellationToken token = default);
 }

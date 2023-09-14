@@ -1,5 +1,7 @@
 
 using System.Text.Json.Serialization;
+using FluentValidation;
+using Hubtel.Wallets.Application;
 using Hubtel.Wallets.Application.Database;
 using Hubtel.Wallets.Application.Interface;
 using Hubtel.Wallets.Application.Repository;
@@ -13,6 +15,7 @@ builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ICustomerWalletRepository, CustomerWalletRepository>();
 builder.Services.AddScoped<ICustomerWalletService, CustomerWalletService>();
 
+builder.Services.AddApplication();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); 
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>

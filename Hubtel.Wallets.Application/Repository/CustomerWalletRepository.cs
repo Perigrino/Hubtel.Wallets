@@ -15,19 +15,21 @@ public class CustomerWalletRepository : ICustomerWalletRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<CustomerWallet>> GetCustomerWalletsAsync()
+    public async Task<IEnumerable<CustomerWallet>> GetCustomerWalletsAsync(CancellationToken token = default)
     {
-        var wallet = await _context.CustomerWallets.OrderBy(createdAt => createdAt.CreatedAt).ToListAsync();
+        var wallet = await _context.CustomerWallets
+            .OrderBy(createdAt => createdAt.CreatedAt).ToListAsync(cancellationToken: token);
         return wallet;
     }
 
-    public async Task<CustomerWallet> GetWalletByWalletId(Guid walletId)
+    public async Task<CustomerWallet> GetWalletByWalletId(Guid walletId , CancellationToken token = default)
     {
-        var result = await _context.CustomerWallets.FirstOrDefaultAsync(wallet => wallet.Id == walletId);
+        var result = await _context.CustomerWallets
+            .FirstOrDefaultAsync(wallet => wallet.Id == walletId, cancellationToken: token);
         return result ?? throw new InvalidOperationException();
     }
     
-    public async Task<bool> CreateCustomerWallet(CustomerWallet wallet)
+    public async Task<bool> CreateCustomerWallet(CustomerWallet wallet , CancellationToken token = default)
     {
         var newWallet = new CustomerWallet
         {
@@ -40,13 +42,14 @@ public class CustomerWalletRepository : ICustomerWalletRepository
             Owner = wallet.Owner,
             CustomerId = wallet.CustomerId
         };
-        await _context.AddAsync(newWallet);
+        await _context.AddAsync(newWallet, token);
         return await Save();
     }
 
-    public async Task<bool> UpdateCustomerWallet(CustomerWallet wallet)
+    public async Task<bool> UpdateCustomerWallet(CustomerWallet wallet, CancellationToken token = default)
     {
-        var result = await _context.CustomerWallets.FirstOrDefaultAsync(id => id.Id == wallet.Id);
+        var result = await _context.CustomerWallets
+            .FirstOrDefaultAsync(id => id.Id == wallet.Id, cancellationToken: token);
         if (result != null)
         {
             result.WalletName = wallet.WalletName;
@@ -60,34 +63,35 @@ public class CustomerWalletRepository : ICustomerWalletRepository
         return await Save();
     }
 
-    public async Task<bool> DeleteCustomerWallet(Guid walletId)
+    public async Task<bool> DeleteCustomerWallet(Guid walletId, CancellationToken token = default)
     {
-        var result = await _context.CustomerWallets.FirstOrDefaultAsync(id => id.Id == walletId);
+        var result = await _context.CustomerWallets
+            .FirstOrDefaultAsync(id => id.Id == walletId, cancellationToken: token);
         if (result == null)
         {
             return false; // Wallet not found or already deleted
         }
         _context.Remove(result);
-        return await Save();
+        return await Save(token);
     }
 
-    public async Task<bool> WalletExists(Guid id)
+    public async Task<bool> WalletExists(Guid id, CancellationToken token = default)
     {
         var wallet =  await _context.CustomerWallets
-            .AnyAsync(w => w.Id == id);
+            .AnyAsync(w => w.Id == id, cancellationToken: token);
         return wallet;
     }
 
-    public async Task<bool> CustomerWalletExists(string accountNumber)
+    public async Task<bool> CustomerWalletExists(string accountNumber, CancellationToken token = default)
     {
         var wallet =  await _context.CustomerWallets
-            .AnyAsync(an => an.AccountNumber == accountNumber);
+            .AnyAsync(an => an.AccountNumber == accountNumber, cancellationToken: token);
         return wallet;
     }
 
-    public async Task<bool> Save()
+    public async Task<bool> Save(CancellationToken token = default)
     {
-        var saved =  await _context.SaveChangesAsync();
+        var saved =  await _context.SaveChangesAsync(token);
         return saved > 0;
     }
 }
