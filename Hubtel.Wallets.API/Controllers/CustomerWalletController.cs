@@ -1,5 +1,4 @@
 using Hubtel.Wallets.Application.Interface;
-using Hubtel.Wallets.Application.Model;
 using Hubtel.Wallets.ContractMappings;
 using Hubtel.Wallets.Contracts.Request;
 using Hubtel.Wallets.Contracts.Response;
@@ -22,9 +21,9 @@ public class CustomerWalletController : Controller
     
     //GET all Wallets
     [HttpGet(ApiEndpoints.CustomerWallet.GetAll)]
-    public async Task<IActionResult> GetCustomerWallets()
+    public async Task<IActionResult> GetCustomerWallets(CancellationToken token)
     {
-        var wallets = await _walletRepository.GetCustomerWalletsAsync();
+        var wallets = await _walletRepository.GetCustomerWalletsAsync(token);
         var walletResponse = new FinalResponse<CustomerWalletsResponse>
         {
             StatusCode = 200,
@@ -36,9 +35,9 @@ public class CustomerWalletController : Controller
     
     //GET WalletByWalletsId
     [HttpGet(ApiEndpoints.CustomerWallet.Get)]
-    public async Task<IActionResult> Get([FromRoute] Guid id)
+    public async Task<IActionResult> Get([FromRoute] Guid id, CancellationToken token)
     {
-        var wallet = await _walletRepository.GetWalletByWalletId(id);
+        var wallet = await _walletRepository.GetWalletByWalletId(id, token);
         if (wallet == null)
         {
             return NotFound(new FinalResponse<object>
@@ -59,7 +58,7 @@ public class CustomerWalletController : Controller
     
     //POST Wallet
     [HttpPost(ApiEndpoints.CustomerWallet.Create)]
-    public async Task<IActionResult> CreateCustomerWallet([FromBody] CreateCustomerWalletRequest request)
+    public async Task<IActionResult> CreateCustomerWallet([FromBody] CreateCustomerWalletRequest request, CancellationToken token)
     {
         if (request == null)
         {
@@ -77,7 +76,7 @@ public class CustomerWalletController : Controller
             if (accountWalletExists)
             {
                 var mapToWallet = request.MapToWallet();
-                await _walletRepository.CreateCustomerWallet(mapToWallet ?? throw new InvalidOperationException());
+                await _walletRepository.CreateCustomerWallet(mapToWallet ?? throw new InvalidOperationException(), token);
                 var walletResponse = new FinalResponse<CustomerWalletResponse>
                 {
                     StatusCode = 201,
@@ -106,7 +105,7 @@ public class CustomerWalletController : Controller
     
     //UPDATE Customer
     [HttpPut(ApiEndpoints.CustomerWallet.Update)]
-    public async Task<IActionResult> UpdateCustomerWallet([FromRoute] Guid id, [FromBody] UpdateCustomerWalletRequest request)
+    public async Task<IActionResult> UpdateCustomerWallet([FromRoute] Guid id, [FromBody] UpdateCustomerWalletRequest request, CancellationToken token)
     {
         if (request == null)
         {
@@ -117,7 +116,7 @@ public class CustomerWalletController : Controller
             return BadRequest(new FinalResponse<object> { StatusCode = 400, Message = "Validation failed.", Data = ModelState });
         }
         var mapToWallet = request.MapToWallet(id);
-        var updateWallet = await _walletRepository.UpdateCustomerWallet(mapToWallet);
+        var updateWallet = await _walletRepository.UpdateCustomerWallet(mapToWallet, token);
         if (updateWallet is false)
         {
             return NotFound(new FinalResponse<object>
@@ -138,10 +137,10 @@ public class CustomerWalletController : Controller
 
     //DELETE Customer 
     [HttpDelete(ApiEndpoints.CustomerWallet.Delete)]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id, CancellationToken token)
     {
-        await _walletRepository.WalletExists(id);
-        var deleteCustomerWallet = await _walletRepository.DeleteCustomerWallet(id);
+        await _walletRepository.WalletExists(id, token);
+        var deleteCustomerWallet = await _walletRepository.DeleteCustomerWallet(id, token);
         if (!deleteCustomerWallet)
         {
             return NotFound(new FinalResponse<string>

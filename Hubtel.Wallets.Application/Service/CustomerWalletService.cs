@@ -11,7 +11,7 @@ public class CustomerWalletService : ICustomerWalletService
     {
         _customerRepository = customerRepository;
     }
-    public bool HasReachedMaxWallets(Guid customerId)
+    public bool HasReachedMaxWallets(Guid customerId, CancellationToken token = default)
     {
         var wallets = _customerRepository.GetCustomerById(customerId);
         if (wallets == null)
@@ -23,7 +23,7 @@ public class CustomerWalletService : ICustomerWalletService
         return numberOfWallet >= 5;
     }
 
-    public bool CustomerWalletExists(Guid customerId, string accountNumber)
+    public bool CustomerWalletExists(Guid customerId, string accountNumber, CancellationToken token = default)
     {
         var result = _customerRepository.GetCustomerById(customerId);
         if (result == null)
